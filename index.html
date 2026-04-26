@@ -720,7 +720,12 @@
                     const res = await fetch(SCRIPT_URL);
                     const jsonData = await res.json();
                     
-                    if (jsonData.schools && jsonData.schools.length > 0) appState.schools = jsonData.schools;
+                    if (jsonData.schools && jsonData.schools.length > 0) {
+                        appState.schools = jsonData.schools.map(s => ({
+                            ...s,
+                            isFullFeature: s.isFullFeature === true || String(s.isFullFeature).toLowerCase() === "true"
+                        }));
+                    }
                     if (jsonData.users && jsonData.users.length > 0) appState.users = jsonData.users;
                     if (jsonData.students && jsonData.students.length > 0) appState.students = jsonData.students;
 
@@ -1428,8 +1433,7 @@
                     if (matchedStudents.length > 0) {
                         const listHasil = matchedStudents.map(s => {
                             const sch = appState.schools.find(sc => sc.id === s.schoolId);
-                            let statusText = `Status: <b>${String(s.status).toUpperCase()}</b>`;
-                            return `• <b>${s.nama}</b> (NISN: ${s.nisn})<br><small><i>${sch ? sch.name : 'Unknown School'}</i></small><br>${statusText}`;
+                            return `• <b>${s.nama}</b><br>NISN: ${s.nisn}<br><small><i>${sch ? sch.name : 'Unknown School'}</i></small>`;
                         }).join('<br><br>');
                         reply = `Berikut hasil pencarian dari database:<br><br>${listHasil}`;
                         isHandled = true;
