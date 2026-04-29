@@ -434,10 +434,8 @@
                                 <h2>Manajemen Data Kelulusan</h2>
                                 <div class="flex gap-2 flex-wrap guru-action-btns justify-end">
                                     <button class="btn btn-success" onclick="saveAllStudents()" title="Simpan semua data ke database">💾 Simpan</button>
-                                    <button class="btn btn-outline" onclick="downloadExcelTemplate()" title="Unduh template Excel">📄 Template</button>
                                     <button class="btn btn-outline" onclick="exportDataToExcel()" title="Ekspor data siswa">📤 Export</button>
-                                    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Import</button>
-                                    <input type="file" id="importFile" class="hidden" accept=".xlsx, .xls" onchange="importExcelData(event)">
+                                    <button class="btn btn-primary" style="background-color: var(--warning-color); color: white;" onclick="openBulkAddModal()">+ Tambah Massal</button>
                                     <button class="btn btn-primary" onclick="openStudentModal()">+ Tambah Siswa</button>
                                 </div>
                             </div>
@@ -447,6 +445,13 @@
                                     <input type="text" id="filterSearch" class="input" placeholder="Cari NISN atau Nama..." onkeyup="renderStudentTable()">
                                     <select id="filterClass" class="select" onchange="renderStudentTable()">
                                         <option value="">Semua Kelas</option>
+                                    </select>
+                                    <select id="filterLimit" class="select" onchange="updateTableLimit()">
+                                        <option value="10">10 Baris</option>
+                                        <option value="25">25 Baris</option>
+                                        <option value="50">50 Baris</option>
+                                        <option value="100">100 Baris</option>
+                                        <option value="all">Semua Data</option>
                                     </select>
                                 </div>
                                 <button class="btn btn-danger" onclick="deleteSelected()">Hapus Terpilih</button>
@@ -607,6 +612,24 @@
                 <div class="flex gap-2 justify-end" style="margin-top: 10px;">
                     <button type="button" class="btn btn-outline" onclick="closeModal('modalStudent')">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Guru: Bulk Add Modal -->
+    <div class="modal-overlay" id="modalBulkAdd">
+        <div class="modal modal-large">
+            <h2 style="margin-bottom: 20px;">Tambah Siswa Massal</h2>
+            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 15px;">Copy data langsung dari Microsoft Excel atau Google Sheets, lalu Paste (Tempel) ke dalam kotak di bawah ini.<br><strong>Pastikan urutan kolomnya:</strong> NISN, Nama Lengkap, Kelas, JK (L/P), Nilai, Status, Catatan.</p>
+            <form onsubmit="saveBulkStudents(event)">
+                <div class="form-group">
+                    <textarea id="bulkStudentData" class="input" rows="10" placeholder="0012345678&#9;Budi Santoso&#9;XII IPA 1&#9;L&#9;85.5&#9;Lulus&#9;Peringkat 1
+0087654321&#9;Siti Aminah&#9;XII IPA 2&#9;P&#9;90.0&#9;Lulus&#9;-" required style="white-space: pre; overflow-wrap: normal; overflow-x: auto; font-family: monospace; font-size: 0.85rem;"></textarea>
+                </div>
+                <div class="flex gap-2 justify-end" style="margin-top: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modalBulkAdd')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Proses Data Massal</button>
                 </div>
             </form>
         </div>
@@ -925,6 +948,13 @@
             fClassEl.innerHTML = `<option value="">Semua Kelas</option>` + uniqueClasses.map(c => `<option value="${c}" ${c === currentSelected ? 'selected' : ''}>${c}</option>`).join('');
         }
 
+        function updateTableLimit() {
+            const limitVal = document.getElementById('filterLimit').value;
+            appState.tableState.limit = limitVal === 'all' ? 999999 : parseInt(limitVal);
+            appState.tableState.page = 1; // Reset ke halaman 1 saat mengubah limit
+            renderStudentTable();
+        }
+
         function renderStudentTable() {
             const tbody = document.getElementById('siswaTableBody');
             const search = document.getElementById('filterSearch').value.toLowerCase(), fClass = document.getElementById('filterClass').value;
@@ -1032,24 +1062,82 @@
         }
 
         // ==========================================
-        // FITUR TEMPLATE, EXPORT & IMPORT EXCEL 
+        // FITUR TAMBAH MASSAL (COPY PASTE EXCEL)
         // ==========================================
-        function downloadExcelTemplate() {
-            try {
-                const data = [ 
-                    ["NISN", "Nama Lengkap", "Kelas", "Jenis Kelamin", "Nilai Rata-rata", "Status Kelulusan", "Catatan"], 
-                    // PERBAIKAN: Tambahkan kutip tunggal (') di depan NISN pada template
-                    ["'0012345678", "Budi Santoso", "XII IPA 1", "L", 85.5, "Lulus", "Peringkat 1"] 
-                ];
-                const ws = XLSX.utils.aoa_to_sheet(data); 
-                const wb = XLSX.utils.book_new(); 
-                XLSX.utils.book_append_sheet(wb, ws, "Template_Siswa"); 
-                XLSX.writeFile(wb, "Template_Data_Kelulusan.xlsx");
-            } catch (error) {
-                alert("Gagal mengunduh template. Pastikan browser Anda mendukung fitur ini.");
+        function openBulkAddModal() {
+            document.getElementById('bulkStudentData').value = '';
+            openModal('modalBulkAdd');
+        }
+
+        function saveBulkStudents(e) {
+            e.preventDefault();
+            const rawData = document.getElementById('bulkStudentData').value.trim();
+            if (!rawData) return;
+
+            // Pisahkan berdasarkan baris baru
+            const rows = rawData.split('\n');
+            let addedCount = 0;
+
+            rows.forEach(row => {
+                // Pisahkan berdasarkan Tab (karena copy dari Excel otomatis menggunakan tab separator)
+                const cols = row.split('\t');
+                
+                // Minimal butuh NISN dan NAMA
+                if (cols.length >= 2) {
+                    let rawNisn = String(cols[0] || '').trim();
+                    let nisnStr = rawNisn.replace(/[^0-9a-zA-Z]/g, '');
+                    
+                    if (nisnStr.length > 0 && nisnStr.length < 10 && !isNaN(nisnStr)) {
+                        nisnStr = nisnStr.padStart(10, '0');
+                    }
+                    
+                    const nama = String(cols[1] || '').trim();
+                    
+                    if (nisnStr && nama) {
+                        const kelas = String(cols[2] || '').trim();
+                        const jk = String(cols[3] || '').trim().toUpperCase().startsWith('P') ? 'P' : 'L';
+                        const nilai = parseFloat(String(cols[4] || '0').replace(',', '.')) || 0;
+                        const status = String(cols[5] || 'Lulus').trim();
+                        const catatan = String(cols[6] || '').trim();
+
+                        const existingIdx = appState.students.findIndex(s => s.schoolId === appState.currentUser.schoolId && String(s.nisn).trim() === nisnStr);
+                        
+                        const newStudent = {
+                            id: existingIdx !== -1 ? appState.students[existingIdx].id : "std_" + Date.now() + Math.random().toString(36).substr(2, 5),
+                            schoolId: appState.currentUser.schoolId,
+                            nisn: nisnStr,
+                            nama: nama,
+                            kelas: kelas,
+                            jk: jk,
+                            nilai: nilai,
+                            status: status,
+                            catatan: catatan
+                        };
+
+                        if (existingIdx !== -1) {
+                            appState.students[existingIdx] = newStudent;
+                        } else {
+                            appState.students.push(newStudent);
+                        }
+                        addedCount++;
+                    }
+                }
+            });
+
+            if (addedCount > 0) {
+                DB.saveData('save_students', appState.students);
+                closeModal('modalBulkAdd');
+                updateClassFilter();
+                renderStudentTable();
+                alert(`Berhasil menambahkan/memperbarui ${addedCount} data siswa!`);
+            } else {
+                alert("Gagal memproses data. Pastikan Anda melakukan copy-paste tabel dengan benar.");
             }
         }
 
+        // ==========================================
+        // FITUR EXPORT EXCEL 
+        // ==========================================
         function exportDataToExcel() {
             try {
                 const schoolStudents = appState.students.filter(s => s.schoolId === appState.currentUser.schoolId); 
@@ -1058,13 +1146,12 @@
                     return;
                 }
                 const data = schoolStudents.map(s => ({ 
-                    // PERBAIKAN: Tambahkan kutip tunggal (') saat diekspor agar Excel membacanya sebagai teks
                     "NISN": "'" + String(s.nisn), 
-                    "Nama Lengkap": s.nama, 
+                    "Nama": s.nama, 
                     "Kelas": s.kelas, 
-                    "Jenis Kelamin": s.jk, 
-                    "Nilai Rata-rata": s.nilai, 
-                    "Status Kelulusan": s.status, 
+                    "JK": s.jk, 
+                    "Nilai": s.nilai, 
+                    "Status": s.status, 
                     "Catatan": s.catatan || "-" 
                 }));
                 const ws = XLSX.utils.json_to_sheet(data); 
@@ -1074,126 +1161,6 @@
             } catch (error) {
                 alert("Gagal mengekspor data Excel. Terjadi kesalahan sistem.");
             }
-        }
-
-        function importExcelData(event) {
-            const file = event.target.files[0]; 
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    
-                    let importedCount = 0;
-                    
-                    for (let i = 0; i < workbook.SheetNames.length; i++) {
-                        const worksheet = workbook[workbook.SheetNames[i]];
-                        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-                        
-                        let headerRowIndex = -1;
-                        let colMap = { nisn: -1, nama: -1, kelas: -1, jk: -1, nilai: -1, status: -1, catatan: -1 };
-
-                        for (let r = 0; r < rows.length; r++) {
-                            const rowArr = rows[r];
-                            if (!rowArr || rowArr.length === 0) continue;
-                            
-                            let tempMap = { nisn: -1, nama: -1, kelas: -1, jk: -1, nilai: -1, status: -1, catatan: -1 };
-                            
-                            for (let c = 0; c < rowArr.length; c++) {
-                                let cell = String(rowArr[c]).toLowerCase().trim();
-                                if (!cell) continue;
-                                
-                                if (cell === "nisn" || cell.includes("nisn")) tempMap.nisn = c;
-                                else if (cell === "nama" || cell.includes("nama siswa") || cell.includes("nama lengkap")) tempMap.nama = c;
-                                else if (cell === "kelas" || cell.includes("rombel") || cell.includes("tingkat")) tempMap.kelas = c;
-                                else if (cell === "jk" || cell === "l/p" || cell.includes("jenis kelamin") || cell.includes("gender")) tempMap.jk = c;
-                                else if (cell === "nilai" || cell.includes("rata") || cell.includes("ujian")) tempMap.nilai = c;
-                                else if (cell === "status" || cell.includes("kelulusan") || cell.includes("keterangan")) tempMap.status = c;
-                                else if (cell.includes("catatan")) tempMap.catatan = c;
-                            }
-                            
-                            if (tempMap.nisn !== -1 && tempMap.nama !== -1) {
-                                headerRowIndex = r;
-                                colMap = tempMap;
-                                break;
-                            }
-                        }
-
-                        if (headerRowIndex !== -1) {
-                            for (let r = headerRowIndex + 1; r < rows.length; r++) {
-                                const rowData = rows[r];
-                                if (!rowData || rowData.length === 0) continue;
-
-                                const cellNisn = colMap.nisn !== -1 ? rowData[colMap.nisn] : "";
-                                const cellNama = colMap.nama !== -1 ? rowData[colMap.nama] : "";
-
-                                if (cellNisn && cellNama) {
-                                    // PERBAIKAN IMPORT: Baca nilai asli, buang kutip tunggal di awal (jika ada), lalu bersihkan
-                                    let rawNisn = String(cellNisn).trim();
-                                    if (rawNisn.startsWith("'")) {
-                                        rawNisn = rawNisn.substring(1);
-                                    }
-                                    
-                                    // Pastikan hanya angka yang tersisa
-                                    let nisnStr = rawNisn.replace(/[^0-9]/g, '');
-                                    
-                                    // Kembalikan angka 0 di depan jika terpotong Excel
-                                    if (nisnStr.length > 0 && nisnStr.length < 10) {
-                                        nisnStr = nisnStr.padStart(10, '0');
-                                    }
-
-                                    const cellNilai = colMap.nilai !== -1 ? rowData[colMap.nilai] : "0";
-                                    const nilaiTeks = String(cellNilai).replace(',', '.');
-                                    
-                                    const cellKelas = colMap.kelas !== -1 ? rowData[colMap.kelas] : "";
-                                    const cellJk = colMap.jk !== -1 ? rowData[colMap.jk] : "L";
-                                    const cellStatus = colMap.status !== -1 ? rowData[colMap.status] : "Lulus";
-                                    const cellCatatan = colMap.catatan !== -1 ? rowData[colMap.catatan] : "";
-
-                                    const existingIdx = appState.students.findIndex(s => s.schoolId === appState.currentUser.schoolId && String(s.nisn).trim() === nisnStr);
-                                    
-                                    const newStudent = { 
-                                        id: existingIdx !== -1 ? appState.students[existingIdx].id : "std_" + Date.now() + Math.random().toString(36).substr(2, 5), 
-                                        schoolId: appState.currentUser.schoolId, 
-                                        nisn: nisnStr, 
-                                        nama: String(cellNama).trim(), 
-                                        kelas: String(cellKelas).trim(), 
-                                        jk: String(cellJk).trim().toUpperCase() === 'P' ? 'P' : 'L', 
-                                        nilai: parseFloat(nilaiTeks) || 0, 
-                                        status: String(cellStatus).trim() || "Lulus", 
-                                        catatan: String(cellCatatan).trim() 
-                                    };
-                                    
-                                    if (existingIdx !== -1) {
-                                        appState.students[existingIdx] = newStudent; 
-                                    } else {
-                                        appState.students.push(newStudent);
-                                    }
-                                    importedCount++;
-                                }
-                            }
-                            break; 
-                        }
-                    }
-                    
-                    if (importedCount > 0) { 
-                        DB.saveData('save_students', appState.students); 
-                        alert(`Proses Selesai! Berhasil mengimpor/memperbarui ${importedCount} data siswa.`); 
-                        updateClassFilter(); 
-                        renderStudentTable(); 
-                    } else { 
-                        alert("Gagal Impor: Format tidak dikenali atau baris data kosong.\nPastikan terdapat baris yang memuat judul kolom 'NISN' dan 'Nama'."); 
-                    }
-                } catch (error) { 
-                    console.error("Import Error:", error); 
-                    alert("Gagal membaca file Excel. Pastikan file menggunakan format (.xlsx / .xls) standar dan file tidak sedang terbuka oleh program lain."); 
-                } finally {
-                    event.target.value = ''; 
-                }
-            };
-            reader.readAsArrayBuffer(file);
         }
 
         // === CHATBOT PINTAR ===
