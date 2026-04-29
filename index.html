@@ -104,6 +104,8 @@
         /* Dashboard Layout (Admin/Guru) */
         .dashboard-layout { display: flex; gap: 30px; align-items: flex-start;}
         .sidebar { width: 260px; flex-shrink: 0; position: sticky; top: 90px;}
+        
+        /* Menu Sidebar di HP (Grid 2 Kolom) */
         .sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
         .sidebar-menu button { text-align: left; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 12px 15px; font-weight: 500;}
         .sidebar-menu button.active, .sidebar-menu button:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
@@ -167,11 +169,9 @@
             header nav { justify-content: space-between; }
             .logo-area h2 { font-size: 1.1rem; }
             
-            /* Responsive Database Status */
             .db-status .status-text { display: none; }
             .db-status { padding: 4px; border-radius: 50%; border: none; background: transparent; }
 
-            /* Responsive Fonts & Layout */
             .hero { padding: 40px 15px; margin-bottom: 20px; }
             .hero h1 { font-size: 1.8rem; margin-bottom: 10px; }
             .hero p { font-size: 1rem !important; }
@@ -182,30 +182,16 @@
             .dashboard-layout { flex-direction: column; }
             .sidebar { width: 100%; position: relative; top: 0;}
             
-            /* Perbaikan Menu Sidebar di HP (Grid 2 Kolom) */
+            /* Sidebar Menu di HP (Grid 2 Kolom) */
             .sidebar-menu { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                gap: 8px; 
-                padding-bottom: 5px;
+                display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-bottom: 5px;
             }
-            .sidebar-menu > div.text-center {
-                grid-column: 1 / -1; /* Header Profil Sekolah Full Width */
-            }
+            .sidebar-menu > div.text-center { grid-column: 1 / -1; }
             .sidebar-menu button { 
-                white-space: normal; /* Memungkinkan teks membungkus ke bawah */
-                font-size: 0.85rem; 
-                padding: 10px 5px; 
-                margin-top: 0 !important; /* Menghapus jarak tidak rata */
-                text-align: center;
-                line-height: 1.2;
-                justify-content: center;
-                height: 100%;
+                white-space: normal; font-size: 0.85rem; padding: 10px 5px; margin-top: 0 !important;
+                text-align: center; line-height: 1.2; justify-content: center; height: 100%;
             }
-            .sidebar-menu button.btn-outline {
-                grid-column: 1 / -1; /* Tombol Simulasi Portal Membentang Penuh */
-                padding: 12px;
-            }
+            .sidebar-menu button.btn-outline { grid-column: 1 / -1; padding: 12px; }
 
             /* Sticky Bottom Navigation */
             .nav-links {
@@ -219,7 +205,7 @@
             
             .guru-action-btns { width: 100%; justify-content: flex-start; }
             
-            /* Perbaikan Tampilan Filter Manajemen Data di HP */
+            /* Tampilan Filter Data di HP */
             .table-toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
             .table-toolbar .filter-group { flex-direction: column; width: 100%; gap: 10px; }
             .table-toolbar .filter-group .input, .table-toolbar .filter-group .select { width: 100%; margin-bottom: 0; flex: none; }
@@ -231,7 +217,7 @@
 </head>
 <body>
 
-    <!-- LAYER LOADING AWAL (Menunggu Sinkronisasi dengan Google Sheet) -->
+    <!-- LAYER LOADING AWAL -->
     <div id="globalLoading">
         <div class="spinner" style="width: 60px; height: 60px; border-width: 6px; margin-bottom: 20px;"></div>
         <h2 style="color: var(--primary-color);">Memuat Database...</h2>
@@ -249,18 +235,13 @@
                         <span class="status-text">Menghubungkan</span>
                     </div>
                 </div>
-                
-                <div class="nav-links" id="navLinks">
-                    <!-- Nav links injected via JS based on auth state -->
-                </div>
+                <div class="nav-links" id="navLinks"></div>
             </nav>
         </div>
     </header>
 
-    <!-- MAIN APP CONTAINER -->
     <main id="app">
-
-        <!-- ==================== 1. HALAMAN BERANDA (LANDING PAGE) ==================== -->
+        <!-- 1. HALAMAN BERANDA -->
         <section id="page-landing" class="page-section hidden">
             <div class="container">
                 <div class="hero">
@@ -270,12 +251,10 @@
                     </p>
                     <button class="btn btn-primary" style="background: white; color: var(--primary-color); font-size: 1.1rem; padding: 12px 30px;" onclick="document.getElementById('schools-section').scrollIntoView({behavior:'smooth'})">Cari Sekolah Anda</button>
                 </div>
-
                 <div class="text-center" style="margin-bottom: 40px;">
                     <h2 style="margin-bottom: 10px; font-size: 2rem;">Keunggulan Aplikasi</h2>
                     <p style="color: #6b7280;">Mengapa memilih LulusTerpadu untuk sekolah Anda?</p>
                 </div>
-                
                 <div class="grid grid-cols-3 gap-4" style="margin-bottom: 60px;">
                     <div class="card text-center">
                         <div class="feature-icon">⚡</div>
@@ -293,45 +272,34 @@
                         <p style="color: #6b7280;">Guru dapat melakukan import/export data menggunakan Microsoft Excel secara langsung dari browser.</p>
                     </div>
                 </div>
-
                 <div id="schools-section" style="padding-top: 20px;">
                     <div class="text-center" style="margin-bottom: 40px;">
                         <h2 style="margin-bottom: 10px; font-size: 2rem;">Daftar Sekolah Mitra</h2>
                         <p style="color: #6b7280;">Pilih sekolah Anda untuk melihat portal pengumuman kelulusan.</p>
                     </div>
-                    
-                    <div class="grid grid-cols-3 gap-4" id="schoolsGrid">
-                        <!-- School Cards Injected via JS -->
-                    </div>
+                    <div class="grid grid-cols-3 gap-4" id="schoolsGrid"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== 2. PORTAL SEKOLAH (CEK STATUS PUBLIK) ==================== -->
+        <!-- 2. PORTAL SEKOLAH -->
         <section id="page-portal" class="page-section hidden">
             <div class="container">
-                
                 <button class="btn btn-outline" style="margin-bottom: 20px;" onclick="navigate('landing')">← Kembali ke Beranda</button>
-                
                 <div class="card text-center" style="margin-bottom: 20px; border-top: 5px solid var(--primary-color);">
                     <img id="portalLogo" src="" alt="Logo Sekolah" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin: 0 auto 15px;">
                     <h2 id="portalSchoolName" style="font-size: 2rem; margin-bottom: 5px;">Nama Sekolah</h2>
                     <p id="portalAddress" style="color: #6b7280; margin-bottom: 20px;">Alamat Sekolah</p>
-                    
                     <div style="background: var(--bg-color); padding: 10px; border-radius: 8px; display: inline-block;">
                         <strong>Tahun Ajaran:</strong> <span id="portalYear">-</span>
                     </div>
                 </div>
-
                 <div class="card search-container">
-                    <!-- Area Waktu Terkunci -->
                     <div id="lockedArea" class="text-center hidden" style="margin-bottom: 20px; padding: 20px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border: 1px dashed var(--danger-color);">
                         <h3 style="color: var(--danger-color); margin-bottom: 10px;">🔒 Akses Belum Dibuka</h3>
                         <p style="margin-bottom: 15px;">Pengumuman kelulusan akan dibuka dalam:</p>
                         <div id="cekCountdownText"></div>
                     </div>
-
-                    <!-- Area Pencarian -->
                     <div id="searchFormArea" class="hidden">
                         <h2 class="text-center" style="margin-bottom: 15px;">Cek Hasil Kelulusan</h2>
                         <p class="text-center" style="margin-bottom: 20px; color: #6b7280;">Masukkan Nomor Induk Siswa Nasional (NISN) atau Nama Lengkap Anda.</p>
@@ -342,7 +310,6 @@
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Cek Status</button>
                         </form>
                     </div>
-
                     <div id="searchLoading" class="hidden">
                         <div class="spinner"></div>
                         <p class="text-center">Sedang mencari data...</p>
@@ -352,7 +319,7 @@
             </div>
         </section>
 
-        <!-- ==================== 3. PANEL ADMIN GLOBAL ==================== -->
+        <!-- 3. PANEL ADMIN -->
         <section id="page-admin" class="page-section hidden">
             <div class="container">
                 <div class="dashboard-layout">
@@ -368,7 +335,6 @@
                         </div>
                     </aside>
                     <main class="main-content">
-                        <!-- TAB ADMIN: Manajemen Guru -->
                         <div id="admin-tab-guru" class="card">
                             <div class="flex justify-between items-center flex-wrap gap-4" style="margin-bottom: 20px;">
                                 <h2>Manajemen Akun Guru</h2>
@@ -382,8 +348,6 @@
                                 </table>
                             </div>
                         </div>
-
-                        <!-- TAB ADMIN: Daftar Sekolah -->
                         <div id="admin-tab-sekolah" class="card hidden">
                             <div class="flex justify-between items-center flex-wrap gap-4" style="margin-bottom: 20px;">
                                 <h2>Daftar Sekolah Mitra</h2>
@@ -403,7 +367,7 @@
             </div>
         </section>
 
-        <!-- ==================== 4. PANEL GURU (PROFIL SEKOLAH & DATA) ==================== -->
+        <!-- 4. PANEL GURU -->
         <section id="page-guru" class="page-section hidden">
             <div class="container">
                 <div class="dashboard-layout">
@@ -422,17 +386,12 @@
                         </div>
                     </aside>
                     <main class="main-content">
-                        
-                        <!-- TAB: Profil Sekolah -->
                         <div id="guru-tab-profil" class="card">
                             <h2>Pengaturan Profil Sekolah</h2>
                             <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color);">
-                            
-                            <!-- Peringatan Kunci Fitur -->
                             <div id="fullFeatureWarning" class="hidden" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed var(--warning-color);">
                                 ⚠️ Fitur terkunci. Upgrade ke <b>Full Fitur</b> untuk dapat mengubah Profil dan Logo sekolah Anda. Hubungi Administrator.
                             </div>
-
                             <form onsubmit="saveSchoolConfig(event)">
                                 <div class="form-group"><label>Nama Sekolah</label><input type="text" id="confSchoolName" class="input" required></div>
                                 <div class="form-group"><label>Alamat Lengkap</label><textarea id="confAddress" class="input" rows="2" required></textarea></div>
@@ -446,12 +405,10 @@
                             </form>
                         </div>
 
-                        <!-- TAB: Tampilan UI -->
                         <div id="guru-tab-tampilan" class="card hidden">
                             <h2>Pengaturan Tampilan Portal</h2>
                             <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color);">
                             <p style="color: #6b7280; margin-bottom: 20px;">Sesuaikan warna utama aplikasi agar sesuai dengan identitas warna sekolah Anda.</p>
-                            
                             <div class="form-group">
                                 <label>Warna Utama (Primary Color)</label>
                                 <div class="flex items-center gap-4">
@@ -461,12 +418,10 @@
                             <button class="btn btn-primary" onclick="saveSchoolTheme()">Terapkan Warna</button>
                         </div>
 
-                        <!-- TAB: Waktu Pengumuman -->
                         <div id="guru-tab-waktu" class="card hidden">
                             <h2>Pengaturan Waktu Pengumuman</h2>
                             <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color);">
                             <p style="color: #6b7280; margin-bottom: 20px;">Tentukan hitung mundur. Akses pencarian status kelulusan pada portal sekolah Anda akan otomatis dikunci oleh sistem sebelum waktu di bawah ini berakhir.</p>
-                            
                             <div class="form-group">
                                 <label>Pilih Tanggal & Waktu Rilis</label>
                                 <input type="datetime-local" id="confCountdown" class="input" style="max-width: 300px;">
@@ -474,11 +429,11 @@
                             <button class="btn btn-primary" onclick="saveSchoolCountdown()">Simpan Waktu</button>
                         </div>
 
-                        <!-- TAB: Data Siswa -->
                         <div id="guru-tab-siswa" class="card hidden">
                             <div class="flex justify-between items-center flex-wrap gap-4" style="margin-bottom: 20px;">
                                 <h2>Manajemen Data Kelulusan</h2>
                                 <div class="flex gap-2 flex-wrap guru-action-btns justify-end">
+                                    <button class="btn btn-success" onclick="saveAllStudents()" title="Simpan semua data ke database">💾 Simpan</button>
                                     <button class="btn btn-outline" onclick="downloadExcelTemplate()" title="Unduh template Excel">📄 Template</button>
                                     <button class="btn btn-outline" onclick="exportDataToExcel()" title="Ekspor data siswa">📤 Export</button>
                                     <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Import</button>
@@ -515,7 +470,6 @@
                             </div>
                             <div class="pagination" id="paginationControls"></div>
                         </div>
-
                     </main>
                 </div>
             </div>
@@ -523,7 +477,7 @@
 
     </main>
 
-    <!-- ==================== MODALS ==================== -->
+    <!-- === MODALS === -->
     <div class="modal-overlay" id="modalLogin">
         <div class="modal">
             <h2 style="margin-bottom: 20px;">Login Sistem</h2>
@@ -559,26 +513,22 @@
         </div>
     </div>
 
-    <!-- Modal Penawaran Aplikasi (Muncul saat Guru Login) -->
+    <!-- Modal Penawaran Aplikasi -->
     <div class="modal-overlay" id="modalOffer">
         <div class="modal text-center">
             <h2 style="margin-bottom: 15px; color: var(--primary-color);">🚀 Upgrade ke Full Fitur!</h2>
             <p style="margin-bottom: 20px; color: #4b5563; font-size: 0.95rem;">Nikmati akses tanpa batas ke semua fitur premium Sistem Kelulusan Terpadu hanya dengan investasi sebesar <strong>Rp. 25.000</strong>.</p>
-            
             <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
                 <p style="margin-bottom: 5px; font-size: 0.9rem;">Transfer ke Rekening:</p>
                 <p style="margin-bottom: 5px;"><strong>Bank BRI</strong></p>
                 <p style="font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; color: var(--text-color); margin-bottom: 5px;">009801023322533</p>
                 <p style="font-size: 0.9rem; color: #6b7280;">a.n. Supriyadi</p>
             </div>
-
             <p style="font-size: 0.9rem; margin-bottom: 15px;">Setelah transfer, silakan konfirmasi pembayaran Anda melalui WhatsApp:</p>
-            
             <a href="https://wa.me/6282371962881?text=Halo%20Supriyadi%2C%20saya%20sudah%20transfer%20Rp.%2025.000%20untuk%20Aplikasi%20Kelulusan%20Full%20Fitur.%20Berikut%20lampiran%20bukti%20transfernya%3A" target="_blank" class="btn btn-success" style="width: 100%; margin-bottom: 10px; background-color: #25D366; color: white; display: flex; justify-content: center; align-items: center; gap: 8px;">
                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 Konfirmasi via WhatsApp
             </a>
-            
             <button class="btn btn-outline" style="width: 100%; border: none; color: #6b7280; font-weight: normal; margin-top: 5px;" onclick="closeModal('modalOffer')">Lain kali saja</button>
         </div>
     </div>
@@ -629,7 +579,7 @@
         </div>
     </div>
 
-    <!-- Guru: Student Modal (Tambah/Edit) -->
+    <!-- Guru: Student Modal -->
     <div class="modal-overlay" id="modalStudent">
         <div class="modal modal-large">
             <h2 id="studentModalTitle" style="margin-bottom: 20px;">Tambah Data Siswa</h2>
@@ -662,7 +612,7 @@
         </div>
     </div>
 
-    <!-- ==================== CHATBOT ==================== -->
+    <!-- === CHATBOT === -->
     <div class="chat-widget">
         <button class="chat-btn" onclick="toggleChat()">💬</button>
         <div class="chat-window" id="chatWindow">
@@ -677,43 +627,34 @@
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
+    <!-- === JAVASCRIPT === -->
     <script>
-        // === KONFIGURASI API GOOGLE SCRIPT ===
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzb8xw0exvkbw72I9M2uw_1i2trSRIagOuwKNNSyYQeid6L1Z2Q-oJo7rbEwGjYTI2x/exec";
 
-        // === STATE MANAGEMENT (SaaS Architecture) ===
         let appState = {
-            schools: [],
-            users: [
-                { id: "admin1", username: "supriyadi", name: "Administrator", role: "admin", pass: "291188" },
-                { id: "guru1", username: "guru1", name: "Guru SMA 1", role: "guru", pass: "guru1", schoolId: "sch1" },
-                { id: "guru2", username: "guru2", name: "Guru SMK", role: "guru", pass: "guru2", schoolId: "sch2" }
-            ],
-            students: [],
-            currentUser: null,
-            currentPortalView: null,
+            schools: [], users: [], students: [],
+            currentUser: null, currentPortalView: null,
             tableState: { page: 1, limit: 10, sortCol: 'nisn', sortAsc: true }
         };
 
         const DB = {
-            // FUNGSI SIMPAN KE GOOGLE SPREADSHEET
             async saveData(actionKey, data) {
                 console.log(`Menyimpan ke ${actionKey} via Google Apps Script...`);
                 try {
-                    // Kita menggunakan POST fetch biasa. Payload diubah jadi string JSON
-                    await fetch(SCRIPT_URL, {
-                        method: "POST",
-                        body: JSON.stringify({ action: actionKey, data: data })
-                        // Tidak menset Header Content-Type khusus agar menghindari block CORS (Preflight error)
-                    });
-                } catch(e) {
-                    console.error("Gagal menyimpan ke Database: ", e);
-                    // Untuk produksi, mungkin perlu notifikasi retry
-                }
+                    let payloadData = data;
+                    
+                    // PERBAIKAN: Paksa NISN menjadi teks agar Google Sheet tidak menghilangkan angka 0
+                    // Kita tambahkan tanda kutip (') di depan NISN khusus saat dikirimkan.
+                    if (actionKey === 'save_students') {
+                        payloadData = data.map(s => ({
+                            ...s,
+                            nisn: String(s.nisn).startsWith("'") ? String(s.nisn) : "'" + String(s.nisn)
+                        }));
+                    }
+
+                    await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: actionKey, data: payloadData }) });
+                } catch(e) { console.error("Gagal menyimpan ke Database: ", e); }
             },
-            
-            // FUNGSI LOAD DARI GOOGLE SPREADSHEET
             async loadData() {
                 updateDbStatus('connecting');
                 try {
@@ -722,23 +663,25 @@
                     
                     if (jsonData.schools && jsonData.schools.length > 0) {
                         appState.schools = jsonData.schools.map(s => ({
-                            ...s,
-                            isFullFeature: s.isFullFeature === true || String(s.isFullFeature).toLowerCase() === "true"
+                            ...s, isFullFeature: s.isFullFeature === true || String(s.isFullFeature).toLowerCase() === "true"
                         }));
                     }
                     if (jsonData.users && jsonData.users.length > 0) appState.users = jsonData.users;
-                    if (jsonData.students && jsonData.students.length > 0) appState.students = jsonData.students;
+                    if (jsonData.students && jsonData.students.length > 0) {
+                        // Menghapus kutip buatan saat data dimuat agar tampilan tabel rapi
+                        appState.students = jsonData.students.map(s => ({
+                            ...s,
+                            nisn: String(s.nisn).replace(/^'/, '')
+                        }));
+                    }
 
-                    // Buat Akun Super Admin Default jika Database benar-benar Kosong (Baru Setup)
                     if (appState.users.length === 0) {
                         appState.users.push({ id: "admin1", username: "supriyadi", name: "Administrator", role: "admin", pass: "291188", schoolId: "" });
                         this.saveData('save_users', appState.users);
                     }
-                    
                     updateDbStatus('connected');
                 } catch(e) {
-                    console.error("Gagal memuat Database: ", e);
-                    updateDbStatus('error');
+                    console.error("Gagal memuat Database: ", e); updateDbStatus('error');
                     alert("Koneksi ke Database gagal. Pastikan URL Google Script sudah benar dan hak akses 'Siapa Saja' telah diizinkan.");
                 }
             }
@@ -747,74 +690,30 @@
         let countdownInterval;
 
         function updateDbStatus(status) {
-            const el = document.getElementById('dbStatus');
-            if(!el) return;
-            const txt = el.querySelector('.status-text');
-            el.className = `db-status ${status}`;
-            if (status === 'connected') {
-                txt.innerText = 'Terhubung';
-                el.title = 'Terhubung ke Database (Live)';
-            } else if (status === 'error') {
-                txt.innerText = 'Terputus';
-                el.title = 'Gagal terhubung ke Database';
-            } else {
-                txt.innerText = 'Menghubungkan';
-                el.title = 'Sedang mensinkronisasi data...';
-            }
+            const el = document.getElementById('dbStatus'); if(!el) return;
+            const txt = el.querySelector('.status-text'); el.className = `db-status ${status}`;
+            if (status === 'connected') { txt.innerText = 'Terhubung'; el.title = 'Terhubung ke Database (Live)'; } 
+            else if (status === 'error') { txt.innerText = 'Terputus'; el.title = 'Gagal terhubung ke Database'; } 
+            else { txt.innerText = 'Menghubungkan'; el.title = 'Sedang mensinkronisasi data...'; }
         }
 
         window.onload = async () => {
-            // 1. Tampilkan Layer Loading (HTML sudah diset untuk menutupi layar)
-            
-            // 2. Load Data dari Google Sheets
             await DB.loadData();
-            
-            // 3. Sembunyikan Layer Loading
-            const loadingLayer = document.getElementById('globalLoading');
-            if(loadingLayer) loadingLayer.remove();
-
-            // 4. Render UI
+            const loadingLayer = document.getElementById('globalLoading'); if(loadingLayer) loadingLayer.remove();
             document.getElementById('page-landing').classList.remove('hidden');
-            renderNavLinks();
-            renderSchoolsGrid();
-            navigate('landing');
-            
-            if(localStorage.getItem('isDarkMode') === 'true') {
-                document.body.classList.add('dark-mode');
-            }
+            renderNavLinks(); renderSchoolsGrid(); navigate('landing');
+            if(localStorage.getItem('isDarkMode') === 'true') document.body.classList.add('dark-mode');
         };
 
-        // === ROUTING & NAVIGATION ===
         function renderNavLinks() {
-            const nav = document.getElementById('navLinks');
-            const user = appState.currentUser;
-            let html = `
-                <a onclick="navigate('landing')" id="nav-landing">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Beranda</span>
-                </a>
-            `;
+            const nav = document.getElementById('navLinks'); const user = appState.currentUser;
+            let html = `<a onclick="navigate('landing')" id="nav-landing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Beranda</span></a>`;
             if(!user) {
-                html += `
-                    <a onclick="openLoginModal()" id="nav-login">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg><span>Login Sistem</span>
-                    </a>`;
+                html += `<a onclick="openLoginModal()" id="nav-login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg><span>Login Sistem</span></a>`;
             } else {
-                if (user.role === 'admin') {
-                    html += `
-                    <a onclick="navigate('admin')" id="nav-admin">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Panel Admin</span>
-                    </a>`;
-                } else if (user.role === 'guru') {
-                    html += `
-                    <a onclick="navigate('guru')" id="nav-guru">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil Sekolah</span>
-                    </a>`;
-                }
-                
-                html += `
-                    <a onclick="logout()" style="color: var(--danger-color);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span>
-                    </a>`;
+                if (user.role === 'admin') { html += `<a onclick="navigate('admin')" id="nav-admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Panel Admin</span></a>`; } 
+                else if (user.role === 'guru') { html += `<a onclick="navigate('guru')" id="nav-guru"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil Sekolah</span></a>`; }
+                html += `<a onclick="logout()" style="color: var(--danger-color);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Logout</span></a>`;
             }
             nav.innerHTML = html;
         }
@@ -822,163 +721,74 @@
         function navigate(pageId) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-            
-            const targetPage = document.getElementById(`page-${pageId}`);
-            if(targetPage) targetPage.classList.remove('hidden');
-            
-            const navLink = document.getElementById(`nav-${pageId}`);
-            if(navLink) navLink.classList.add('active');
+            const targetPage = document.getElementById(`page-${pageId}`); if(targetPage) targetPage.classList.remove('hidden');
+            const navLink = document.getElementById(`nav-${pageId}`); if(navLink) navLink.classList.add('active');
 
-            if(pageId === 'landing' || pageId === 'admin') {
-                applyThemeColor('#2563eb'); 
-                appState.currentPortalView = null;
-            }
-
+            if(pageId === 'landing' || pageId === 'admin') { applyThemeColor('#2563eb'); appState.currentPortalView = null; }
             if(pageId === 'guru' && appState.currentUser && appState.currentUser.role === 'guru') {
                 const school = appState.schools.find(s => s.id === appState.currentUser.schoolId);
-                if(school) {
-                    applyThemeColor(school.themeColor || '#2563eb');
-                    renderGuruDashboard(school);
-                    updateClassFilter();
-                    renderStudentTable();
-                } else {
-                    alert("Sekolah Anda belum terdaftar atau telah dihapus Admin.");
-                    logout();
-                }
+                if(school) { applyThemeColor(school.themeColor || '#2563eb'); renderGuruDashboard(school); updateClassFilter(); renderStudentTable(); } 
+                else { alert("Sekolah Anda belum terdaftar."); logout(); }
             }
-
-            if(pageId === 'admin' && appState.currentUser && appState.currentUser.role === 'admin') {
-                renderAdminGuruTable();
-                renderAdminSchoolTable();
-            }
+            if(pageId === 'admin' && appState.currentUser && appState.currentUser.role === 'admin') { renderAdminGuruTable(); renderAdminSchoolTable(); }
         }
 
-        function applyThemeColor(hex) {
-            document.documentElement.style.setProperty('--primary-color', hex);
-            document.documentElement.style.setProperty('--primary-hover', adjustColor(hex, -20));
-        }
-
+        function applyThemeColor(hex) { document.documentElement.style.setProperty('--primary-color', hex); document.documentElement.style.setProperty('--primary-hover', adjustColor(hex, -20)); }
         function adjustColor(color, amount) { return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2)); }
 
-        // === LANDING PAGE ===
         function renderSchoolsGrid() {
             const grid = document.getElementById('schoolsGrid');
-            if (appState.schools.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #6b7280; padding: 20px;">Belum ada sekolah mitra yang terdaftar. Login sebagai Admin untuk menambah data sekolah.</div>`;
-                return;
-            }
-
+            if (appState.schools.length === 0) { grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #6b7280; padding: 20px;">Belum ada sekolah mitra.</div>`; return; }
             grid.innerHTML = appState.schools.map(s => `
                 <div class="card school-card" onclick="openSchoolPortal('${s.id}')">
-                    <img src="${s.logoUrl || 'https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah'}" alt="${s.name}">
+                    <img src="${s.logoUrl || 'https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah'}" onerror="this.src='https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah'">
                     <h3 style="font-size: 1.1rem; margin-bottom: 5px;">${s.name}</h3>
                     <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">${s.address}</p>
                     <button class="btn btn-outline" style="width: 100%; border-color: ${s.themeColor || '#2563eb'}; color: ${s.themeColor || '#2563eb'}">Masuk Portal</button>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        // === PORTAL SEKOLAH (PUBLIK) ===
         function openSchoolPortal(schoolId) {
-            const school = appState.schools.find(s => s.id === schoolId);
-            if(!school) return;
-            
-            appState.currentPortalView = schoolId;
-            applyThemeColor(school.themeColor || '#2563eb');
-            
+            const school = appState.schools.find(s => s.id === schoolId); if(!school) return;
+            appState.currentPortalView = schoolId; applyThemeColor(school.themeColor || '#2563eb');
             document.getElementById('portalLogo').src = school.logoUrl || 'https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah';
-            document.getElementById('portalSchoolName').innerText = school.name;
-            document.getElementById('portalAddress').innerText = school.address;
-            document.getElementById('portalYear').innerText = school.year;
-            
-            document.getElementById('resultCard').classList.add('hidden');
-            document.getElementById('searchInput').value = '';
-            
-            navigate('portal');
-            initCountdown(school.countdownTarget);
+            document.getElementById('portalSchoolName').innerText = school.name; document.getElementById('portalAddress').innerText = school.address; document.getElementById('portalYear').innerText = school.year;
+            document.getElementById('resultCard').classList.add('hidden'); document.getElementById('searchInput').value = '';
+            navigate('portal'); initCountdown(school.countdownTarget);
         }
 
-        // === COUNTDOWN LOGIC ===
         function initCountdown(targetDateStr) {
             if(countdownInterval) clearInterval(countdownInterval);
-            if(!targetDateStr) {
-                unlockPortal();
-                return;
-            }
-            countdownInterval = setInterval(() => updateCountdownDisplays(targetDateStr), 1000);
-            updateCountdownDisplays(targetDateStr);
+            if(!targetDateStr) { unlockPortal(); return; }
+            countdownInterval = setInterval(() => updateCountdownDisplays(targetDateStr), 1000); updateCountdownDisplays(targetDateStr);
         }
 
         function updateCountdownDisplays(targetDateStr) {
-            const target = new Date(targetDateStr).getTime();
-            const now = new Date().getTime();
-            const distance = target - now;
-
-            const cekCd = document.getElementById('cekCountdownText');
-            if (distance < 0) {
-                if(cekCd) cekCd.innerHTML = "";
-                unlockPortal();
-                return;
-            }
-
-            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-            if(cekCd) {
-                cekCd.innerHTML = `
-                <div class="flex gap-2 justify-center">
-                    <div class="cd-box"><span>${d.toString().padStart(2, '0')}</span><small>Hari</small></div>
-                    <div class="cd-box"><span>${h.toString().padStart(2, '0')}</span><small>Jam</small></div>
-                    <div class="cd-box"><span>${m.toString().padStart(2, '0')}</span><small>Menit</small></div>
-                    <div class="cd-box"><span>${s.toString().padStart(2, '0')}</span><small>Detik</small></div>
-                </div>`;
-            }
+            const distance = new Date(targetDateStr).getTime() - new Date().getTime(); const cekCd = document.getElementById('cekCountdownText');
+            if (distance < 0) { if(cekCd) cekCd.innerHTML = ""; unlockPortal(); return; }
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24)), h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)), m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)), s = Math.floor((distance % (1000 * 60)) / 1000);
+            if(cekCd) { cekCd.innerHTML = `<div class="flex gap-2 justify-center"><div class="cd-box"><span>${d.toString().padStart(2, '0')}</span><small>Hari</small></div><div class="cd-box"><span>${h.toString().padStart(2, '0')}</span><small>Jam</small></div><div class="cd-box"><span>${m.toString().padStart(2, '0')}</span><small>Menit</small></div><div class="cd-box"><span>${s.toString().padStart(2, '0')}</span><small>Detik</small></div></div>`; }
             lockPortal();
         }
 
-        function lockPortal() {
-            document.getElementById('searchFormArea').classList.add('hidden');
-            document.getElementById('lockedArea').classList.remove('hidden');
-        }
-        function unlockPortal() {
-            document.getElementById('searchFormArea').classList.remove('hidden');
-            document.getElementById('lockedArea').classList.add('hidden');
-        }
+        function lockPortal() { document.getElementById('searchFormArea').classList.add('hidden'); document.getElementById('lockedArea').classList.remove('hidden'); }
+        function unlockPortal() { document.getElementById('searchFormArea').classList.remove('hidden'); document.getElementById('lockedArea').classList.add('hidden'); }
 
         function handleSearch(e) {
-            e.preventDefault();
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const schoolId = appState.currentPortalView;
-            
-            document.getElementById('resultCard').classList.add('hidden');
-            document.getElementById('searchLoading').classList.remove('hidden');
-
+            e.preventDefault(); const query = document.getElementById('searchInput').value.toLowerCase().trim(); const schoolId = appState.currentPortalView;
+            document.getElementById('resultCard').classList.add('hidden'); document.getElementById('searchLoading').classList.remove('hidden');
             setTimeout(() => {
                 document.getElementById('searchLoading').classList.add('hidden');
-                
                 const siswa = appState.students.find(s => s.schoolId === schoolId && (String(s.nisn).toLowerCase() === query || String(s.nama).toLowerCase() === query));
-                
                 const resultBox = document.getElementById('resultCard');
                 if(siswa) {
-                    const isLulus = siswa.status.toLowerCase() === 'lulus';
-                    const badgeClass = isLulus ? 'status-lulus' : 'status-tidak';
-                    resultBox.innerHTML = `<h3 style="font-size: 1.5rem; margin-bottom: 5px;">${siswa.nama}</h3>
-                        <p style="color: #6b7280; font-size: 1.1rem;">NISN: ${siswa.nisn}</p>
-                        <div class="status-badge ${badgeClass}">${isLulus ? '✅' : '❌'} Dinyatakan ${siswa.status.toUpperCase()}</div>
-                        <div class="grid grid-cols-2 gap-4" style="text-align: left; background: var(--bg-color); padding: 15px; border-radius: 8px;">
-                            <div><strong>Kelas:</strong><br>${siswa.kelas}</div><div><strong>Nilai Rata-rata:</strong><br>${siswa.nilai}</div>
-                            <div style="grid-column: span 2;"><strong>Catatan:</strong><br>${siswa.catatan || '-'}</div></div>`;
-                } else {
-                    resultBox.innerHTML = `<div style="padding: 20px;"><h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ Data Tidak Ditemukan</h3>
-                        <p>Pastikan NISN sudah benar dan terdaftar di sekolah ini.</p></div>`;
-                }
+                    const isLulus = String(siswa.status).toLowerCase() === 'lulus'; const badgeClass = isLulus ? 'status-lulus' : 'status-tidak';
+                    resultBox.innerHTML = `<h3 style="font-size: 1.5rem; margin-bottom: 5px;">${siswa.nama}</h3><p style="color: #6b7280; font-size: 1.1rem;">NISN: ${siswa.nisn}</p><div class="status-badge ${badgeClass}">${isLulus ? '✅' : '❌'} Dinyatakan ${String(siswa.status).toUpperCase()}</div><div class="grid grid-cols-2 gap-4" style="text-align: left; background: var(--bg-color); padding: 15px; border-radius: 8px;"><div><strong>Kelas:</strong><br>${siswa.kelas}</div><div><strong>Nilai Rata-rata:</strong><br>${siswa.nilai}</div><div style="grid-column: span 2;"><strong>Catatan:</strong><br>${siswa.catatan || '-'}</div></div>`;
+                } else { resultBox.innerHTML = `<div style="padding: 20px;"><h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ Data Tidak Ditemukan</h3><p>Pastikan NISN sudah benar.</p></div>`; }
                 resultBox.classList.remove('hidden');
             }, 800);
         }
 
-        // === AUTH ===
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function openLoginModal() { openModal('modalLogin'); }
@@ -991,260 +801,88 @@
 
         function handleLogin(e) {
             e.preventDefault();
-            const role = document.getElementById('loginRole').value;
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-            
+            const role = document.getElementById('loginRole').value, user = document.getElementById('loginUser').value, pass = document.getElementById('loginPass').value;
             const foundUser = appState.users.find(u => String(u.username) === user && String(u.pass) === pass && u.role === role);
             if(foundUser) {
-                appState.currentUser = foundUser; 
-                renderNavLinks(); 
-                closeModal('modalLogin');
-                document.getElementById('loginUser').value = ''; document.getElementById('loginPass').value = '';
-                
-                if (role === 'admin') {
-                    navigate('admin');
-                } else {
-                    navigate('guru');
-                    // Tampilkan pop-up penawaran aplikasi setelah 0.5 detik saat guru login
-                    setTimeout(() => {
-                        openModal('modalOffer');
-                    }, 500);
-                }
-            } else { 
-                alert("Username, Password, atau Pilihan Role salah!"); 
-            }
+                appState.currentUser = foundUser; renderNavLinks(); closeModal('modalLogin'); document.getElementById('loginUser').value = ''; document.getElementById('loginPass').value = '';
+                if (role === 'admin') navigate('admin'); 
+                else { navigate('guru'); setTimeout(() => { openModal('modalOffer'); }, 500); }
+            } else { alert("Username, Password, atau Pilihan Role salah!"); }
         }
 
         function logout() { appState.currentUser = null; renderNavLinks(); navigate('landing'); }
 
-        // === ADMIN DASHBOARD ===
         function switchAdminTab(tabName) {
-            ['guru', 'sekolah'].forEach(t => document.getElementById(`admin-tab-${t}`).classList.add('hidden'));
-            document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
-            document.querySelectorAll('#page-admin .sidebar-menu button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            ['guru', 'sekolah'].forEach(t => document.getElementById(`admin-tab-${t}`).classList.add('hidden')); document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
+            document.querySelectorAll('#page-admin .sidebar-menu button').forEach(b => b.classList.remove('active')); event.target.classList.add('active');
         }
 
         function renderAdminGuruTable() {
-            const tbody = document.getElementById('adminGuruTableBody');
-            tbody.innerHTML = '';
-            const guruUsers = appState.users.filter(u => u.role === 'guru');
-            
+            const tbody = document.getElementById('adminGuruTableBody'); tbody.innerHTML = ''; const guruUsers = appState.users.filter(u => u.role === 'guru');
             guruUsers.forEach(u => {
                 const school = appState.schools.find(s => s.id === u.schoolId);
-                const schoolName = school ? school.name : "<i>Tidak ada (Error)</i>";
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${u.username}</td>
-                        <td>${u.name}</td>
-                        <td>${schoolName}</td>
-                        <td><span style="font-family: monospace;">${u.pass}</span></td>
-                        <td>
-                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" onclick="editAdminGuru('${u.id}')">Edit</button>
-                            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="deleteAdminGuru('${u.id}')">Hapus</button>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr><td>${u.username}</td><td>${u.name}</td><td>${school ? school.name : "<i>Tidak ada</i>"}</td><td><span style="font-family: monospace;">${u.pass}</span></td><td><button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" onclick="editAdminGuru('${u.id}')">Edit</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="deleteAdminGuru('${u.id}')">Hapus</button></td></tr>`;
             });
             if(guruUsers.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center">Belum ada user guru terdaftar.</td></tr>`;
         }
 
         function renderAdminSchoolTable() {
-            const tbody = document.getElementById('adminSchoolTableBody');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('adminSchoolTableBody'); tbody.innerHTML = '';
             appState.schools.forEach(s => {
-                const featureBadge = s.isFullFeature ? '<span style="background: var(--success-color); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Full Fitur</span>' : '<span style="background: #6b7280; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Standar</span>';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${s.id}</td>
-                        <td>${s.name}</td>
-                        <td>${s.address}</td>
-                        <td>${featureBadge}</td>
-                        <td>
-                            <button class="btn ${s.isFullFeature ? 'btn-outline' : 'btn-success'}" style="padding: 4px 8px; font-size: 0.8rem;" onclick="toggleFullFeature('${s.id}')">${s.isFullFeature ? 'Matikan Full Fitur' : 'Aktifkan Full Fitur'}</button>
-                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" onclick="editAdminSchool('${s.id}')">Edit</button>
-                            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="deleteAdminSchool('${s.id}')">Hapus</button>
-                        </td>
-                    </tr>`;
+                const badge = s.isFullFeature ? '<span style="background: var(--success-color); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Full Fitur</span>' : '<span style="background: #6b7280; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Standar</span>';
+                tbody.innerHTML += `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.address}</td><td>${badge}</td><td><button class="btn ${s.isFullFeature ? 'btn-outline' : 'btn-success'}" style="padding: 4px 8px; font-size: 0.8rem;" onclick="toggleFullFeature('${s.id}')">${s.isFullFeature ? 'Matikan Full Fitur' : 'Aktifkan Full Fitur'}</button> <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" onclick="editAdminSchool('${s.id}')">Edit</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="deleteAdminSchool('${s.id}')">Hapus</button></td></tr>`;
             });
-            if(appState.schools.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center">Belum ada sekolah mitra terdaftar.</td></tr>`;
+            if(appState.schools.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center">Belum ada sekolah mitra.</td></tr>`;
         }
 
-        function toggleFullFeature(id) {
-            const school = appState.schools.find(x => x.id === id);
-            if(school) {
-                school.isFullFeature = !school.isFullFeature; // Membalik status (Aktif <-> Nonaktif)
-                DB.saveData('save_schools', appState.schools);
-                renderAdminSchoolTable();
-            }
-        }
+        function toggleFullFeature(id) { const school = appState.schools.find(x => x.id === id); if(school) { school.isFullFeature = !school.isFullFeature; DB.saveData('save_schools', appState.schools); renderAdminSchoolTable(); } }
 
-        function openAdminSchoolModal() {
-            document.getElementById('adminSchoolId').value = '';
-            document.getElementById('adminSchoolName').value = '';
-            document.getElementById('adminSchoolAddress').value = '';
-            document.getElementById('adminSchoolYear').value = '2025/2026';
-            document.getElementById('adminSchoolModalTitle').innerText = 'Tambah Sekolah Mitra';
-            openModal('modalAdminSchool');
-        }
-
-        function editAdminSchool(id) {
-            const s = appState.schools.find(x => x.id === id); if(!s) return;
-            document.getElementById('adminSchoolId').value = s.id;
-            document.getElementById('adminSchoolName').value = s.name;
-            document.getElementById('adminSchoolAddress').value = s.address;
-            document.getElementById('adminSchoolYear').value = s.year;
-            document.getElementById('adminSchoolModalTitle').innerText = 'Edit Sekolah Mitra';
-            openModal('modalAdminSchool');
-        }
-
+        function openAdminSchoolModal() { ['adminSchoolId', 'adminSchoolName', 'adminSchoolAddress'].forEach(id => document.getElementById(id).value = ''); document.getElementById('adminSchoolYear').value = '2025/2026'; document.getElementById('adminSchoolModalTitle').innerText = 'Tambah Sekolah Mitra'; openModal('modalAdminSchool'); }
+        function editAdminSchool(id) { const s = appState.schools.find(x => x.id === id); if(!s) return; document.getElementById('adminSchoolId').value = s.id; document.getElementById('adminSchoolName').value = s.name; document.getElementById('adminSchoolAddress').value = s.address; document.getElementById('adminSchoolYear').value = s.year; document.getElementById('adminSchoolModalTitle').innerText = 'Edit Sekolah Mitra'; openModal('modalAdminSchool'); }
         function saveAdminSchool(e) {
-            e.preventDefault();
-            const id = document.getElementById('adminSchoolId').value;
-            const newData = {
-                name: document.getElementById('adminSchoolName').value,
-                address: document.getElementById('adminSchoolAddress').value,
-                year: document.getElementById('adminSchoolYear').value
-            };
-
-            if(id) {
-                const index = appState.schools.findIndex(x => x.id === id);
-                appState.schools[index] = { ...appState.schools[index], ...newData };
-            } else {
-                const newId = "sch_" + Date.now();
-                appState.schools.push({
-                    id: newId, name: newData.name, address: newData.address, year: newData.year,
-                    logoUrl: "https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah", themeColor: "#2563eb", countdownTarget: "",
-                    isFullFeature: false // Default saat dibuat adalah Standar (False)
-                });
-            }
-            DB.saveData('save_schools', appState.schools);
-            closeModal('modalAdminSchool');
-            renderAdminSchoolTable();
-            renderSchoolsGrid(); 
+            e.preventDefault(); const id = document.getElementById('adminSchoolId').value; const newData = { name: document.getElementById('adminSchoolName').value, address: document.getElementById('adminSchoolAddress').value, year: document.getElementById('adminSchoolYear').value };
+            if(id) { const i = appState.schools.findIndex(x => x.id === id); appState.schools[i] = { ...appState.schools[i], ...newData }; } 
+            else { appState.schools.push({ id: "sch_" + Date.now(), name: newData.name, address: newData.address, year: newData.year, logoUrl: "https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah", themeColor: "#2563eb", countdownTarget: "", isFullFeature: false }); }
+            DB.saveData('save_schools', appState.schools); closeModal('modalAdminSchool'); renderAdminSchoolTable(); renderSchoolsGrid(); 
         }
-
         function deleteAdminSchool(id) {
-            if(confirm("PERINGATAN!\nMenghapus sekolah akan menghapus SEMUA akun guru dan data siswa yang terkait dengan sekolah ini secara permanen. Lanjutkan?")) {
-                appState.schools = appState.schools.filter(x => x.id !== id);
-                appState.users = appState.users.filter(x => x.schoolId !== id);
-                appState.students = appState.students.filter(x => x.schoolId !== id);
-                
-                DB.saveData('save_schools', appState.schools);
-                DB.saveData('save_users', appState.users);
-                DB.saveData('save_students', appState.students);
-
-                renderAdminSchoolTable();
-                renderAdminGuruTable();
-                renderSchoolsGrid();
+            if(confirm("Menghapus sekolah akan menghapus SEMUA akun guru dan data siswa yang terkait. Lanjutkan?")) {
+                appState.schools = appState.schools.filter(x => x.id !== id); appState.users = appState.users.filter(x => x.schoolId !== id); appState.students = appState.students.filter(x => x.schoolId !== id);
+                DB.saveData('save_schools', appState.schools); DB.saveData('save_users', appState.users); DB.saveData('save_students', appState.students); renderAdminSchoolTable(); renderAdminGuruTable(); renderSchoolsGrid();
             }
         }
 
         function openAdminGuruModal() {
-            if (appState.schools.length === 0) {
-                alert("Anda harus membuat Data Sekolah Mitra terlebih dahulu sebelum menambahkan akun guru.");
-                return;
-            }
-            document.getElementById('adminUserId').value = '';
-            document.getElementById('adminUserName').value = '';
-            document.getElementById('adminUserUsername').value = '';
-            document.getElementById('adminUserPass').value = '';
-            
-            const schoolSelect = document.getElementById('adminUserSchool');
-            schoolSelect.innerHTML = appState.schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-            openModal('modalAdminUser');
+            if (appState.schools.length === 0) return alert("Buat Data Sekolah Mitra terlebih dahulu.");
+            ['adminUserId', 'adminUserName', 'adminUserUsername', 'adminUserPass'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('adminUserSchool').innerHTML = appState.schools.map(s => `<option value="${s.id}">${s.name}</option>`).join(''); openModal('modalAdminUser');
         }
-
         function editAdminGuru(id) {
             const u = appState.users.find(x => x.id === id); if(!u) return;
-            const schoolSelect = document.getElementById('adminUserSchool');
-            schoolSelect.innerHTML = appState.schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-            
-            document.getElementById('adminUserId').value = u.id;
-            document.getElementById('adminUserName').value = u.name;
-            document.getElementById('adminUserUsername').value = u.username;
-            document.getElementById('adminUserSchool').value = u.schoolId;
-            document.getElementById('adminUserPass').value = u.pass;
-            openModal('modalAdminUser');
+            document.getElementById('adminUserSchool').innerHTML = appState.schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            document.getElementById('adminUserId').value = u.id; document.getElementById('adminUserName').value = u.name; document.getElementById('adminUserUsername').value = u.username; document.getElementById('adminUserSchool').value = u.schoolId; document.getElementById('adminUserPass').value = u.pass; openModal('modalAdminUser');
         }
-
         function saveAdminGuru(e) {
-            e.preventDefault();
-            const id = document.getElementById('adminUserId').value;
-            const newData = {
-                name: document.getElementById('adminUserName').value,
-                username: document.getElementById('adminUserUsername').value,
-                schoolId: document.getElementById('adminUserSchool').value,
-                pass: document.getElementById('adminUserPass').value,
-                role: 'guru'
-            };
-
-            if(id) {
-                const index = appState.users.findIndex(x => x.id === id);
-                appState.users[index] = { ...appState.users[index], ...newData };
-            } else {
-                newData.id = "guru_" + Date.now();
-                appState.users.push(newData);
-            }
-            DB.saveData('save_users', appState.users);
-            closeModal('modalAdminUser');
-            renderAdminGuruTable();
+            e.preventDefault(); const id = document.getElementById('adminUserId').value; const newData = { name: document.getElementById('adminUserName').value, username: document.getElementById('adminUserUsername').value, schoolId: document.getElementById('adminUserSchool').value, pass: document.getElementById('adminUserPass').value, role: 'guru' };
+            if(id) { const i = appState.users.findIndex(x => x.id === id); appState.users[i] = { ...appState.users[i], ...newData }; } else { newData.id = "guru_" + Date.now(); appState.users.push(newData); }
+            DB.saveData('save_users', appState.users); closeModal('modalAdminUser'); renderAdminGuruTable();
         }
+        function deleteAdminGuru(id) { if(confirm("Yakin hapus akun guru ini?")) { appState.users = appState.users.filter(x => x.id !== id); DB.saveData('save_users', appState.users); renderAdminGuruTable(); } }
 
-        function deleteAdminGuru(id) {
-            if(confirm("Yakin hapus akun guru ini?")) {
-                appState.users = appState.users.filter(x => x.id !== id);
-                DB.saveData('save_users', appState.users);
-                renderAdminGuruTable();
-            }
-        }
-
-
-        // === GURU DASHBOARD ===
         function switchGuruTab(tabName) {
-            ['profil', 'tampilan', 'waktu', 'siswa'].forEach(t => document.getElementById(`guru-tab-${t}`).classList.add('hidden'));
-            document.getElementById(`guru-tab-${tabName}`).classList.remove('hidden');
-            document.querySelectorAll('#page-guru .sidebar-menu button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            ['profil', 'tampilan', 'waktu', 'siswa'].forEach(t => document.getElementById(`guru-tab-${t}`).classList.add('hidden')); document.getElementById(`guru-tab-${tabName}`).classList.remove('hidden');
+            document.querySelectorAll('#page-guru .sidebar-menu button').forEach(b => b.classList.remove('active')); event.target.classList.add('active');
         }
 
         function renderGuruDashboard(school) {
-            document.getElementById('guruSidebarName').innerText = school.name;
-            document.getElementById('guruSidebarLogo').src = school.logoUrl || 'https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah';
-            
-            document.getElementById('confSchoolName').value = school.name;
-            document.getElementById('confAddress').value = school.address;
-            document.getElementById('confYear').value = school.year;
-            document.getElementById('confLogo').value = school.logoUrl || '';
-            document.getElementById('colorPicker').value = school.themeColor || '#2563eb';
-            document.getElementById('confCountdown').value = school.countdownTarget || '';
-
-            // Logika Pembatasan Full Fitur
-            const isFull = school.isFullFeature || false;
-            const inputs = ['confSchoolName', 'confAddress', 'confYear', 'confLogo'];
-            
-            // Kunci atau Buka kolom inputan
-            inputs.forEach(id => document.getElementById(id).disabled = !isFull);
-            
-            const btnSimpan = document.getElementById('btnSimpanProfil');
-            const warning = document.getElementById('fullFeatureWarning');
-            
-            // Sembunyikan tombol simpan dan tampilkan peringatan jika belum Full Fitur
-            if(!isFull) {
-                if(btnSimpan) btnSimpan.classList.add('hidden');
-                if(warning) warning.classList.remove('hidden');
-            } else {
-                if(btnSimpan) btnSimpan.classList.remove('hidden');
-                if(warning) warning.classList.add('hidden');
-            }
+            document.getElementById('guruSidebarName').innerText = school.name; document.getElementById('guruSidebarLogo').src = school.logoUrl || 'https://via.placeholder.com/100/2563eb/ffffff?text=Sekolah';
+            document.getElementById('confSchoolName').value = school.name; document.getElementById('confAddress').value = school.address; document.getElementById('confYear').value = school.year; document.getElementById('confLogo').value = school.logoUrl || ''; document.getElementById('colorPicker').value = school.themeColor || '#2563eb'; document.getElementById('confCountdown').value = school.countdownTarget || '';
+            const isFull = school.isFullFeature || false; const inputs = ['confSchoolName', 'confAddress', 'confYear', 'confLogo']; inputs.forEach(id => document.getElementById(id).disabled = !isFull);
+            const btnSimpan = document.getElementById('btnSimpanProfil'), warning = document.getElementById('fullFeatureWarning');
+            if(!isFull) { if(btnSimpan) btnSimpan.classList.add('hidden'); if(warning) warning.classList.remove('hidden'); } else { if(btnSimpan) btnSimpan.classList.remove('hidden'); if(warning) warning.classList.add('hidden'); }
         }
 
-        function previewSchoolPortal() {
-            const sid = appState.currentUser.schoolId;
-            openSchoolPortal(sid);
-        }
+        function previewSchoolPortal() { openSchoolPortal(appState.currentUser.schoolId); }
 
         function saveSchoolConfig(e) {
             e.preventDefault();
@@ -1325,7 +963,12 @@
         }
 
         function sortSiswa(col) { appState.tableState.sortCol = col; appState.tableState.sortAsc = !appState.tableState.sortAsc; renderStudentTable(); }
-        function toggleCheckAll() { const isChecked = document.getElementById('checkAll').checked; document.querySelectorAll('.chk-siswa').forEach(cb => cb.checked = isChecked); }
+        
+        function toggleCheckAll() { 
+            const isChecked = document.getElementById('checkAll').checked; 
+            document.querySelectorAll('.chk-siswa').forEach(cb => cb.checked = isChecked); 
+        }
+        
         function deleteSelected() {
             const checked = Array.from(document.querySelectorAll('.chk-siswa:checked')).map(cb => cb.value);
             if(checked.length === 0) return alert("Pilih data yang ingin dihapus!");
@@ -1338,15 +981,22 @@
 
         function openStudentModal() {
             ['studId', 'studNisn', 'studNama', 'studKelas', 'studNilai', 'studCatatan'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('studentModalTitle').innerText = 'Tambah Data Siswa'; openModal('modalStudent');
+            document.getElementById('studentModalTitle').innerText = 'Tambah Data Siswa'; 
+            openModal('modalStudent');
         }
 
         function editStudent(id) {
             const s = appState.students.find(x => String(x.id) === String(id)); if(!s) return;
-            document.getElementById('studId').value = s.id; document.getElementById('studNisn').value = s.nisn; document.getElementById('studNama').value = s.nama;
-            document.getElementById('studKelas').value = s.kelas; document.getElementById('studJk').value = s.jk; document.getElementById('studNilai').value = s.nilai;
-            document.getElementById('studStatus').value = s.status; document.getElementById('studCatatan').value = s.catatan;
-            document.getElementById('studentModalTitle').innerText = 'Edit Data Siswa'; openModal('modalStudent');
+            document.getElementById('studId').value = s.id; 
+            document.getElementById('studNisn').value = s.nisn; 
+            document.getElementById('studNama').value = s.nama;
+            document.getElementById('studKelas').value = s.kelas; 
+            document.getElementById('studJk').value = s.jk; 
+            document.getElementById('studNilai').value = s.nilai;
+            document.getElementById('studStatus').value = s.status; 
+            document.getElementById('studCatatan').value = s.catatan;
+            document.getElementById('studentModalTitle').innerText = 'Edit Data Siswa'; 
+            openModal('modalStudent');
         }
 
         function saveStudent(e) {
@@ -1354,109 +1004,223 @@
             const id = document.getElementById('studId').value;
             const newData = { 
                 schoolId: appState.currentUser.schoolId,
-                nisn: document.getElementById('studNisn').value, nama: document.getElementById('studNama').value, kelas: document.getElementById('studKelas').value,
-                jk: document.getElementById('studJk').value, nilai: parseFloat(document.getElementById('studNilai').value), status: document.getElementById('studStatus').value, catatan: document.getElementById('studCatatan').value 
+                nisn: document.getElementById('studNisn').value, 
+                nama: document.getElementById('studNama').value, 
+                kelas: document.getElementById('studKelas').value,
+                jk: document.getElementById('studJk').value, 
+                nilai: parseFloat(document.getElementById('studNilai').value), 
+                status: document.getElementById('studStatus').value, 
+                catatan: document.getElementById('studCatatan').value 
             };
-            if(id) { const index = appState.students.findIndex(x => String(x.id) === String(id)); appState.students[index] = { ...appState.students[index], ...newData }; } 
-            else { newData.id = "std_" + Date.now() + Math.random().toString(36).substr(2, 5); appState.students.push(newData); }
+            if(id) { 
+                const index = appState.students.findIndex(x => String(x.id) === String(id)); 
+                appState.students[index] = { ...appState.students[index], ...newData }; 
+            } else { 
+                newData.id = "std_" + Date.now() + Math.random().toString(36).substr(2, 5); 
+                appState.students.push(newData); 
+            }
             
             DB.saveData('save_students', appState.students);
-            closeModal('modalStudent'); updateClassFilter(); renderStudentTable();
+            closeModal('modalStudent'); 
+            updateClassFilter(); 
+            renderStudentTable();
         }
 
-        // EXPORT IMPORT EXCEL
+        function saveAllStudents() {
+            DB.saveData('save_students', appState.students);
+            alert("Seluruh data kelulusan berhasil disimpan ke database!");
+        }
+
+        // ==========================================
+        // FITUR TEMPLATE, EXPORT & IMPORT EXCEL 
+        // ==========================================
         function downloadExcelTemplate() {
-            const data = [ ["NISN", "Nama", "Kelas", "Jenis Kelamin", "Nilai", "Status", "Catatan"], ["0012345678", "Budi Santoso", "XII IPA 1", "L", 85.5, "Lulus", "Peringkat 1"] ];
-            const ws = XLSX.utils.aoa_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Template_Siswa"); XLSX.writeFile(wb, "Template_Data_Siswa.xlsx");
+            try {
+                const data = [ 
+                    ["NISN", "Nama Lengkap", "Kelas", "Jenis Kelamin", "Nilai Rata-rata", "Status Kelulusan", "Catatan"], 
+                    // PERBAIKAN: Tambahkan kutip tunggal (') di depan NISN pada template
+                    ["'0012345678", "Budi Santoso", "XII IPA 1", "L", 85.5, "Lulus", "Peringkat 1"] 
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(data); 
+                const wb = XLSX.utils.book_new(); 
+                XLSX.utils.book_append_sheet(wb, ws, "Template_Siswa"); 
+                XLSX.writeFile(wb, "Template_Data_Kelulusan.xlsx");
+            } catch (error) {
+                alert("Gagal mengunduh template. Pastikan browser Anda mendukung fitur ini.");
+            }
         }
 
         function exportDataToExcel() {
-            const schoolStudents = appState.students.filter(s => s.schoolId === appState.currentUser.schoolId);
-            if (schoolStudents.length === 0) return alert("Tidak ada data untuk diekspor!");
-            const data = schoolStudents.map(s => ({ "NISN": s.nisn, "Nama": s.nama, "Kelas": s.kelas, "Jenis Kelamin": s.jk, "Nilai": s.nilai, "Status": s.status, "Catatan": s.catatan || "-" }));
-            const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data_Kelulusan"); XLSX.writeFile(wb, `Data_Kelulusan_${new Date().toISOString().slice(0,10)}.xlsx`);
+            try {
+                const schoolStudents = appState.students.filter(s => s.schoolId === appState.currentUser.schoolId); 
+                if (schoolStudents.length === 0) {
+                    alert("Peringatan: Tidak ada data siswa untuk diekspor!");
+                    return;
+                }
+                const data = schoolStudents.map(s => ({ 
+                    // PERBAIKAN: Tambahkan kutip tunggal (') saat diekspor agar Excel membacanya sebagai teks
+                    "NISN": "'" + String(s.nisn), 
+                    "Nama Lengkap": s.nama, 
+                    "Kelas": s.kelas, 
+                    "Jenis Kelamin": s.jk, 
+                    "Nilai Rata-rata": s.nilai, 
+                    "Status Kelulusan": s.status, 
+                    "Catatan": s.catatan || "-" 
+                }));
+                const ws = XLSX.utils.json_to_sheet(data); 
+                const wb = XLSX.utils.book_new(); 
+                XLSX.utils.book_append_sheet(wb, ws, "Data_Kelulusan"); 
+                XLSX.writeFile(wb, `Data_Kelulusan_${new Date().toISOString().slice(0,10)}.xlsx`);
+            } catch (error) {
+                alert("Gagal mengekspor data Excel. Terjadi kesalahan sistem.");
+            }
         }
 
         function importExcelData(event) {
-            const file = event.target.files[0]; if (!file) return;
+            const file = event.target.files[0]; 
+            if (!file) return;
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'});
-                    const json = XLSX.utils.sheet_to_json(workbook[workbook.SheetNames[0]]);
-                    if (json.length === 0) return alert("File Excel kosong.");
-                    let count = 0;
-                    json.forEach(row => {
-                        if (row["NISN"] && row["Nama"]) {
-                            const nisnStr = String(row["NISN"]).trim();
-                            const existingIdx = appState.students.findIndex(s => s.schoolId === appState.currentUser.schoolId && s.nisn === nisnStr);
-                            const newStudent = { id: existingIdx !== -1 ? appState.students[existingIdx].id : "std_" + Date.now() + Math.random().toString(36).substr(2, 5), schoolId: appState.currentUser.schoolId, nisn: nisnStr, nama: String(row["Nama"]), kelas: row["Kelas"] || "", jk: row["Jenis Kelamin"] || "L", nilai: parseFloat(row["Nilai"]) || 0, status: row["Status"] || "Lulus", catatan: row["Catatan"] || "" };
-                            if (existingIdx !== -1) appState.students[existingIdx] = newStudent; else appState.students.push(newStudent);
-                            count++;
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    let importedCount = 0;
+                    
+                    for (let i = 0; i < workbook.SheetNames.length; i++) {
+                        const worksheet = workbook[workbook.SheetNames[i]];
+                        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                        
+                        let headerRowIndex = -1;
+                        let colMap = { nisn: -1, nama: -1, kelas: -1, jk: -1, nilai: -1, status: -1, catatan: -1 };
+
+                        for (let r = 0; r < rows.length; r++) {
+                            const rowArr = rows[r];
+                            if (!rowArr || rowArr.length === 0) continue;
+                            
+                            let tempMap = { nisn: -1, nama: -1, kelas: -1, jk: -1, nilai: -1, status: -1, catatan: -1 };
+                            
+                            for (let c = 0; c < rowArr.length; c++) {
+                                let cell = String(rowArr[c]).toLowerCase().trim();
+                                if (!cell) continue;
+                                
+                                if (cell === "nisn" || cell.includes("nisn")) tempMap.nisn = c;
+                                else if (cell === "nama" || cell.includes("nama siswa") || cell.includes("nama lengkap")) tempMap.nama = c;
+                                else if (cell === "kelas" || cell.includes("rombel") || cell.includes("tingkat")) tempMap.kelas = c;
+                                else if (cell === "jk" || cell === "l/p" || cell.includes("jenis kelamin") || cell.includes("gender")) tempMap.jk = c;
+                                else if (cell === "nilai" || cell.includes("rata") || cell.includes("ujian")) tempMap.nilai = c;
+                                else if (cell === "status" || cell.includes("kelulusan") || cell.includes("keterangan")) tempMap.status = c;
+                                else if (cell.includes("catatan")) tempMap.catatan = c;
+                            }
+                            
+                            if (tempMap.nisn !== -1 && tempMap.nama !== -1) {
+                                headerRowIndex = r;
+                                colMap = tempMap;
+                                break;
+                            }
                         }
-                    });
-                    DB.saveData('save_students', appState.students);
-                    alert(`Berhasil mengimpor ${count} data siswa.`); updateClassFilter(); renderStudentTable();
-                } catch (error) { alert("Format salah atau terjadi error saat membaca file Excel."); }
+
+                        if (headerRowIndex !== -1) {
+                            for (let r = headerRowIndex + 1; r < rows.length; r++) {
+                                const rowData = rows[r];
+                                if (!rowData || rowData.length === 0) continue;
+
+                                const cellNisn = colMap.nisn !== -1 ? rowData[colMap.nisn] : "";
+                                const cellNama = colMap.nama !== -1 ? rowData[colMap.nama] : "";
+
+                                if (cellNisn && cellNama) {
+                                    // PERBAIKAN IMPORT: Baca nilai asli, buang kutip tunggal di awal (jika ada), lalu bersihkan
+                                    let rawNisn = String(cellNisn).trim();
+                                    if (rawNisn.startsWith("'")) {
+                                        rawNisn = rawNisn.substring(1);
+                                    }
+                                    
+                                    // Pastikan hanya angka yang tersisa
+                                    let nisnStr = rawNisn.replace(/[^0-9]/g, '');
+                                    
+                                    // Kembalikan angka 0 di depan jika terpotong Excel
+                                    if (nisnStr.length > 0 && nisnStr.length < 10) {
+                                        nisnStr = nisnStr.padStart(10, '0');
+                                    }
+
+                                    const cellNilai = colMap.nilai !== -1 ? rowData[colMap.nilai] : "0";
+                                    const nilaiTeks = String(cellNilai).replace(',', '.');
+                                    
+                                    const cellKelas = colMap.kelas !== -1 ? rowData[colMap.kelas] : "";
+                                    const cellJk = colMap.jk !== -1 ? rowData[colMap.jk] : "L";
+                                    const cellStatus = colMap.status !== -1 ? rowData[colMap.status] : "Lulus";
+                                    const cellCatatan = colMap.catatan !== -1 ? rowData[colMap.catatan] : "";
+
+                                    const existingIdx = appState.students.findIndex(s => s.schoolId === appState.currentUser.schoolId && String(s.nisn).trim() === nisnStr);
+                                    
+                                    const newStudent = { 
+                                        id: existingIdx !== -1 ? appState.students[existingIdx].id : "std_" + Date.now() + Math.random().toString(36).substr(2, 5), 
+                                        schoolId: appState.currentUser.schoolId, 
+                                        nisn: nisnStr, 
+                                        nama: String(cellNama).trim(), 
+                                        kelas: String(cellKelas).trim(), 
+                                        jk: String(cellJk).trim().toUpperCase() === 'P' ? 'P' : 'L', 
+                                        nilai: parseFloat(nilaiTeks) || 0, 
+                                        status: String(cellStatus).trim() || "Lulus", 
+                                        catatan: String(cellCatatan).trim() 
+                                    };
+                                    
+                                    if (existingIdx !== -1) {
+                                        appState.students[existingIdx] = newStudent; 
+                                    } else {
+                                        appState.students.push(newStudent);
+                                    }
+                                    importedCount++;
+                                }
+                            }
+                            break; 
+                        }
+                    }
+                    
+                    if (importedCount > 0) { 
+                        DB.saveData('save_students', appState.students); 
+                        alert(`Proses Selesai! Berhasil mengimpor/memperbarui ${importedCount} data siswa.`); 
+                        updateClassFilter(); 
+                        renderStudentTable(); 
+                    } else { 
+                        alert("Gagal Impor: Format tidak dikenali atau baris data kosong.\nPastikan terdapat baris yang memuat judul kolom 'NISN' dan 'Nama'."); 
+                    }
+                } catch (error) { 
+                    console.error("Import Error:", error); 
+                    alert("Gagal membaca file Excel. Pastikan file menggunakan format (.xlsx / .xls) standar dan file tidak sedang terbuka oleh program lain."); 
+                } finally {
+                    event.target.value = ''; 
+                }
             };
-            reader.readAsArrayBuffer(file); event.target.value = '';
+            reader.readAsArrayBuffer(file);
         }
 
         // === CHATBOT PINTAR ===
         function toggleChat() { document.getElementById('chatWindow').classList.toggle('active'); }
-        
         function handleChat(e) {
-            e.preventDefault(); 
-            const input = document.getElementById('chatInput'); 
-            const msg = input.value.trim(); 
-            if(!msg) return;
-            
-            addChatMsg(msg, 'user'); 
-            input.value = '';
-            
+            e.preventDefault(); const input = document.getElementById('chatInput'); const msg = input.value.trim(); if(!msg) return; addChatMsg(msg, 'user'); input.value = '';
             setTimeout(() => {
-                const txt = msg.toLowerCase(); 
-                let reply = "Maaf, saya tidak memahami permintaan Anda. Ketik NISN / Nama Siswa untuk mengecek kelulusan.";
-                let isHandled = false;
-
-                if (txt.includes('buat') || txt.includes('aplikasi') || txt.includes('pengembang') || txt.includes('pesan') || txt.includes('beli') || txt.includes('developer')) {
-                    reply = `Ingin memiliki Platform Kelulusan Terpadu seperti ini untuk instansi/sekolah Anda?<br><br>Hubungi Pengembang kami sekarang via WhatsApp: <a href="https://wa.me/6282371962881" target="_blank" style="color:var(--primary-color); font-weight:bold;">082371962881</a>`;
-                    isHandled = true;
+                const txt = msg.toLowerCase(); let reply = "Maaf, saya tidak memahami permintaan Anda. Ketik NISN / Nama Siswa."; let isHandled = false;
+                if (txt.includes('buat') || txt.includes('aplikasi') || txt.includes('pengembang') || txt.includes('pesan') || txt.includes('developer')) {
+                    reply = `Ingin memiliki Platform Kelulusan Terpadu seperti ini?<br><br>Hubungi Pengembang via WhatsApp: <a href="https://wa.me/6282371962881" target="_blank" style="color:var(--primary-color); font-weight:bold;">082371962881</a>`; isHandled = true;
                 }
-
                 if (!isHandled && (txt.includes('nisn') || txt.includes('nama') || txt.includes('lulus') || txt.match(/\d{5,}/))) {
-                    let studentsToSearch = appState.students;
-                    if (appState.currentPortalView) studentsToSearch = appState.students.filter(s => s.schoolId === appState.currentPortalView);
-
+                    let studentsToSearch = appState.currentPortalView ? appState.students.filter(s => s.schoolId === appState.currentPortalView) : appState.students;
                     const matchedStudents = studentsToSearch.filter(s => txt.includes(String(s.nama).toLowerCase()) || txt.includes(String(s.nisn).toLowerCase()));
-                    
                     if (matchedStudents.length > 0) {
-                        const listHasil = matchedStudents.map(s => {
+                        reply = `Berikut hasil pencarian:<br><br>` + matchedStudents.map(s => {
                             const sch = appState.schools.find(sc => sc.id === s.schoolId);
-                            return `• <b>${s.nama}</b><br>NISN: ${s.nisn}<br><small><i>${sch ? sch.name : 'Unknown School'}</i></small>`;
-                        }).join('<br><br>');
-                        reply = `Berikut hasil pencarian dari database:<br><br>${listHasil}`;
-                        isHandled = true;
-                    } else {
-                        reply = "Data siswa yang Anda maksud tidak ditemukan. Pastikan NISN atau ejaan Nama sudah benar dan terdaftar di database sekolah.";
-                        isHandled = true;
-                    }
+                            return `• <b>${s.nama}</b><br>NISN: ${s.nisn}<br><small><i>${sch ? sch.name : ''}</i></small>`;
+                        }).join('<br><br>'); isHandled = true;
+                    } else { reply = "Data siswa tidak ditemukan."; isHandled = true; }
                 }
-
-                if (!isHandled) {
-                    if(txt.includes('halo') || txt.includes('hai')) {
-                        reply = "Halo! Silakan ketik <b>Nama Lengkap</b> atau <b>NISN</b> siswa untuk mengecek data kelulusan.<br><br>Atau ketik <b>'pesan aplikasi'</b> jika berminat bekerja sama dengan pengembang kami.";
-                    }
-                }
-
+                if (!isHandled && (txt.includes('halo') || txt.includes('hai'))) reply = "Halo! Silakan ketik <b>Nama Lengkap</b> atau <b>NISN</b> siswa untuk mengecek data.";
                 addChatMsg(reply, 'bot');
             }, 600);
         }
-
         function addChatMsg(text, sender) {
-            const body = document.getElementById('chatBody');
-            body.innerHTML += `<div class="chat-msg ${sender === 'bot' ? 'msg-bot' : 'msg-user'}">${text}</div>`;
-            body.scrollTop = body.scrollHeight;
+            const body = document.getElementById('chatBody'); body.innerHTML += `<div class="chat-msg ${sender === 'bot' ? 'msg-bot' : 'msg-user'}">${text}</div>`; body.scrollTop = body.scrollHeight;
         }
     </script>
 </body>
